@@ -1,4 +1,4 @@
-baseURL = 'https://dannykopping.github.io'
+baseURL = 'https://dannykopping.github.io/blog'
 languageCode = 'en-us'
 title = "Danny Kopping's Blog"
 theme = 'archie'
