@@ -1,0 +1,28 @@
+baseURL = 'https://infomaniac.co.za'
+languageCode = 'en-us'
+title = "Danny Kopping's Blog"
+theme = 'archie'
+copyright = "© Danny Kopping"
+[params]
+	mode="toggle" # color-mode → light,dark,toggle or auto
+	useCDN=false # don't use CDNs for fonts and icons, instead serve them locally.
+	subtitle = "Minimal and Clean [blog theme for Hugo](https://github.com/athul/archie)"
+
+# Social Tags
+
+[[params.social]]
+name = "GitHub"
+icon = "github"
+url = "https://github.com/dannykopping"
+
+[[params.social]]
+name = "Twitter"
+icon = "twitter"
+url = "https://twitter.com/dannykopping/"
+
+# Main menu Items
+
+[[menu.main]]
+name = "Home"
+url = "/"
+weight = 1
