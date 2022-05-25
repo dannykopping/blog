@@ -1,4 +1,4 @@
-baseURL = 'https://infomaniac.co.za'
+baseURL = 'https://dannykopping.github.io'
 languageCode = 'en-us'
 title = "Danny Kopping's Blog"
 theme = 'archie'
