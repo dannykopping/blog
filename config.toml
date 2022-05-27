@@ -1,10 +1,10 @@
-baseURL = 'https://dannykopping.github.io/blog'
+baseURL = 'https://blog.infomaniac.co.za/'
 languageCode = 'en-us'
 title = "Danny Kopping's Blog"
 theme = 'archie'
 copyright = "© Danny Kopping"
 [params]
-	mode="toggle" # color-mode → light,dark,toggle or auto
+	mode="auto" # color-mode → light,dark,toggle or auto
 	useCDN=false # don't use CDNs for fonts and icons, instead serve them locally.
 	subtitle = "Minimal and Clean [blog theme for Hugo](https://github.com/athul/archie)"
 
