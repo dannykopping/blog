@@ -1,0 +1,95 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><title>Golang quickie: benchmark output - Danny Kopping's Blog</title><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Benchmark output fun with Go"><meta property="og:image" content><meta property="og:title" content="Golang quickie: benchmark output"><meta property="og:description" content="Benchmark output fun with Go"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.infomaniac.co.za/posts/go-benchmarks/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2022-06-09T00:00:00+00:00"><meta property="article:modified_time" content="2022-06-09T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Golang quickie: benchmark output"><meta name=twitter:description content="Benchmark output fun with Go"><script src=https://blog.infomaniac.co.za/js/feather.min.js></script>
+<link href=https://blog.infomaniac.co.za/css/fonts.b685ac6f654695232de7b82a9143a46f9e049c8e3af3a21d9737b01f4be211d1.css rel=stylesheet><link rel=stylesheet type=text/css media=screen href=https://blog.infomaniac.co.za/css/main.5f16326007d8a4c28ae466964af89ce7139e69969e434f3399ad3a63d481f24d.css><link id=darkModeStyle rel=stylesheet type=text/css href=https://blog.infomaniac.co.za/css/dark.bf03085a19ebb8e46e705079edf92c974769e8a7f5cb9ebf3cbe919092afbaf0.css></head><body><div class=content><header><div class=main><a href=https://blog.infomaniac.co.za/>Danny Kopping's Blog</a></div><nav><a href=/>Home</a></nav></header><main><article><div class=title><h1 class=title>Golang quickie: benchmark output</h1><div class=meta>Posted on Jun 9, 2022</div></div><section class=body><h2 id=benchmarks-in-go>Benchmarks in Go</h2><p>Go provides a convenient way for writing & running benchmarks, but by default doesn&rsquo;t show you much useful info.</p><p>Here&rsquo;s an example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;math/rand&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>letters</span> = []rune(<span style=color:#e6db74>&#34;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#34;</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>randSeq</span>(<span style=color:#a6e22e>n</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>b</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>rune</span>, <span style=color:#a6e22e>n</span>)
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>b</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>b</span>[<span style=color:#a6e22e>i</span>] = <span style=color:#a6e22e>letters</span>[<span style=color:#a6e22e>rand</span>.<span style=color:#a6e22e>Intn</span>(len(<span style=color:#a6e22e>letters</span>))]
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> string(<span style=color:#a6e22e>b</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkRandInt</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>randSeq</span>(<span style=color:#a6e22e>i</span>)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Here&rsquo;s the output:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ go test -bench<span style=color:#f92672>=</span>.               
+</span></span><span style=display:flex><span>goos: linux
+</span></span><span style=display:flex><span>goarch: amd64
+</span></span><span style=display:flex><span>pkg: github.com/dannykopping/blog
+</span></span><span style=display:flex><span>cpu: Intel<span style=color:#f92672>(</span>R<span style=color:#f92672>)</span> Core<span style=color:#f92672>(</span>TM<span style=color:#f92672>)</span> i7-10510U CPU @ 1.80GHz
+</span></span><span style=display:flex><span>BenchmarkRandInt-8         <span style=color:#ae81ff>10000</span>            <span style=color:#ae81ff>148245</span> ns/op
+</span></span><span style=display:flex><span>PASS
+</span></span><span style=display:flex><span>ok      github.com/dannykopping/blog    1.486s
+</span></span></code></pre></div><p>Not much info there, just the iterations (<code>10000</code>) and nanosecond timing per operation (<code>ns/op</code>) detail.</p><h3 id=allocations>Allocations</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkRandInt</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ReportAllocs</span>() <span style=color:#75715e>// &lt;- adding this
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>randSeq</span>(<span style=color:#a6e22e>i</span>)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>If we add <a href=https://pkg.go.dev/testing#B.ReportAllocs><code>b.ReportAllocs()</code></a> to our benchmark, we&rsquo;ll now see this output:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ go test -bench<span style=color:#f92672>=</span>.
+</span></span><span style=display:flex><span>goos: linux
+</span></span><span style=display:flex><span>goarch: amd64
+</span></span><span style=display:flex><span>pkg: github.com/dannykopping/blog
+</span></span><span style=display:flex><span>cpu: Intel<span style=color:#f92672>(</span>R<span style=color:#f92672>)</span> Core<span style=color:#f92672>(</span>TM<span style=color:#f92672>)</span> i7-10510U CPU @ 1.80GHz
+</span></span><span style=display:flex><span>BenchmarkRandInt-8         <span style=color:#ae81ff>10000</span>            <span style=color:#ae81ff>144155</span> ns/op           <span style=color:#ae81ff>26858</span> B/op          <span style=color:#ae81ff>2</span> allocs/op
+</span></span><span style=display:flex><span>PASS
+</span></span><span style=display:flex><span>ok      github.com/dannykopping/blog    1.445s
+</span></span></code></pre></div><p>We can also use the <code>-benchmem</code> flag to get the same output.</p><p>We now have two additional entries per line, namely bytes per operation (<code>B/op</code>) and heap allocations per op (<code>allocs/op</code>).</p><p>This shows us that our program needs to allocate twice per operation, which can be improved upon. Maybe we shouldn&rsquo;t
+cast that slice of runes to a string&mldr;</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>randSeq</span>(<span style=color:#a6e22e>n</span> <span style=color:#66d9ef>int</span>) []<span style=color:#66d9ef>rune</span> { <span style=color:#75715e>// &lt;- changed return type
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>	<span style=color:#a6e22e>b</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>rune</span>, <span style=color:#a6e22e>n</span>)
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>b</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>b</span>[<span style=color:#a6e22e>i</span>] = <span style=color:#a6e22e>letters</span>[<span style=color:#a6e22e>rand</span>.<span style=color:#a6e22e>Intn</span>(len(<span style=color:#a6e22e>letters</span>))]
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>b</span> <span style=color:#75715e>// &lt;- no more cast
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ go test -bench<span style=color:#f92672>=</span>.
+</span></span><span style=display:flex><span>goos: linux
+</span></span><span style=display:flex><span>goarch: amd64
+</span></span><span style=display:flex><span>pkg: github.com/dannykopping/blog
+</span></span><span style=display:flex><span>cpu: Intel<span style=color:#f92672>(</span>R<span style=color:#f92672>)</span> Core<span style=color:#f92672>(</span>TM<span style=color:#f92672>)</span> i7-10510U CPU @ 1.80GHz
+</span></span><span style=display:flex><span>BenchmarkRandInt-8         <span style=color:#ae81ff>10000</span>            <span style=color:#ae81ff>119485</span> ns/op           <span style=color:#ae81ff>21540</span> B/op          <span style=color:#ae81ff>1</span> allocs/op
+</span></span><span style=display:flex><span>PASS
+</span></span><span style=display:flex><span>ok      github.com/dannykopping/blog    1.198s
+</span></span></code></pre></div><p>Great, down to 1 <code>allocs/op</code>.</p><p>We can also see that we&rsquo;re processing <code>21540 B/op</code>, but can we see how much data we&rsquo;re processing per second?</p><h3 id=speed>Speed</h3><p>We can track the amount of data being processed in our benchmarks by adding <a href=https://pkg.go.dev/testing#B.SetBytes><code>b.SetBytes(n int64)</code></a>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkRandInt</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ReportAllocs</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>SetBytes</span>(int64(len(<span style=color:#a6e22e>randSeq</span>(<span style=color:#a6e22e>i</span>)))) <span style=color:#75715e>// &lt;- setting this
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span> $ go test -bench<span style=color:#f92672>=</span>.
+</span></span><span style=display:flex><span>goos: linux
+</span></span><span style=display:flex><span>goarch: amd64
+</span></span><span style=display:flex><span>pkg: github.com/dannykopping/blog
+</span></span><span style=display:flex><span>cpu: Intel<span style=color:#f92672>(</span>R<span style=color:#f92672>)</span> Core<span style=color:#f92672>(</span>TM<span style=color:#f92672>)</span> i7-10510U CPU @ 1.80GHz
+</span></span><span style=display:flex><span>BenchmarkRandInt-8         <span style=color:#ae81ff>10000</span>            <span style=color:#ae81ff>113312</span> ns/op          88.24 MB/s       <span style=color:#ae81ff>21540</span> B/op          <span style=color:#ae81ff>1</span> allocs/op
+</span></span><span style=display:flex><span>PASS
+</span></span><span style=display:flex><span>ok      github.com/dannykopping/blog    1.136s
+</span></span></code></pre></div><p>OK, nice. <code>88.24 MB/s</code> of bytes being processed.</p><h3 id=custom-metrics>Custom Metrics</h3><p>In the output above, we saw <code>BenchmarkRandInt-8 10000</code> with <code>10000</code> indicating test iterations.</p><p>We can add a custom metric which will report the same figure with <a href=https://pkg.go.dev/testing#B.ReportMetric><code>b.ReportMetric(n float64, unit string)</code></a>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkRandInt</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ReportAllocs</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>SetBytes</span>(int64(len(<span style=color:#a6e22e>randSeq</span>(<span style=color:#a6e22e>i</span>))))
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ReportMetric</span>(float64(<span style=color:#a6e22e>i</span><span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>), <span style=color:#e6db74>&#34;runs&#34;</span>)
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>$ go test -bench<span style=color:#f92672>=</span>. -benchtime<span style=color:#f92672>=</span>100x                 
+</span></span><span style=display:flex><span>goos: linux
+</span></span><span style=display:flex><span>goarch: amd64
+</span></span><span style=display:flex><span>pkg: github.com/dannykopping/blog
+</span></span><span style=display:flex><span>cpu: Intel<span style=color:#f92672>(</span>R<span style=color:#f92672>)</span> Core<span style=color:#f92672>(</span>TM<span style=color:#f92672>)</span> i7-10510U CPU @ 1.80GHz
+</span></span><span style=display:flex><span>BenchmarkRandInt-8           <span style=color:#ae81ff>100</span>              <span style=color:#ae81ff>1526</span> ns/op          64.86 MB/s           100.0 runs            <span style=color:#ae81ff>206</span> B/op          <span style=color:#ae81ff>1</span> allocs/op
+</span></span><span style=display:flex><span>PASS
+</span></span><span style=display:flex><span>ok      github.com/dannykopping/blog    0.002s
+</span></span></code></pre></div><p>Using the <code>-benchtime=100x</code> flag to limit the iterations to 100, we can now see <code>100.0 runs</code> in the output!</p></section><div class=post-tags><nav class="nav tags"><ul class=tags><li><a href=/tags/quickie>quickie</a></li><li><a href=/tags/go>go</a></li><li><a href=/tags/benchmarks>benchmarks</a></li><li><a href=/tags/performance>performance</a></li></ul></nav></div></article></main><footer><div style=display:flex><a class=soc href=https://github.com/dannykopping title=GitHub><i data-feather=github></i></a><a class=soc href=https://twitter.com/dannykopping/ title=Twitter><i data-feather=twitter></i></a></div><div class=footer-info>2022 © Danny Kopping | <a href=https://github.com/athul/archie>Archie Theme</a> | Built with <a href=https://gohugo.io>Hugo</a></div></footer><script>feather.replace()</script></div></body></html>
