@@ -1,10 +1,10 @@
 /* Markdown */
 :root{
 --maincolor: red;
---bordercl:rebeccapurple;
+--bordercl: #5e5e5e;
 --callouctcolor:dodgerblue;
 --hovercolor:navy;
---darkMaincolor: #50fa7b;
+--darkMaincolor: #b1670b;
 }
 html {
   color: #232333;
@@ -99,7 +99,7 @@ figure h4::before {
 
 /* Code blocks */
 code {
-  background-color: #f1f1f1;
+  background-color: #525252;
   padding: .1em .2em;
 }
 
