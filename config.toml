@@ -1,6 +1,6 @@
 baseURL = 'https://blog.infomaniac.co.za/'
 languageCode = 'en-us'
-title = "Danny Kopping's Blog"
+title = "Danny Kopping"
 theme = 'archie'
 copyright = "© Danny Kopping"
 [params]
